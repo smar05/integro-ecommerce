@@ -17,17 +17,17 @@ export class AppComponent implements OnInit {
   constructor(private urlShopsService: UrlShopsService) {}
 
   async ngOnInit(): Promise<void> {
-    await this.obtenerIdShop();
+    this.showPages = await this.obtenerIdShop();
   }
 
   /**
    * Se obtiene el id de la tienda en base a su url
    *
    * @private
-   * @return {*}  {Promise<void>}
+   * @return {*}  {Promise<boolean>}
    * @memberof AppComponent
    */
-  private async obtenerIdShop(): Promise<void> {
+  private async obtenerIdShop(): Promise<boolean> {
     localStorage.clear();
 
     // Se obtiene la url
@@ -40,14 +40,13 @@ export class AppComponent implements OnInit {
     try {
       res = await this.urlShopsService.getDataFS(qf).toPromise();
     } catch (error) {
-      this.showPages = false;
-      throw new Error(error);
+      return false;
     }
 
     let data: IUrlShops = { id: res[0].id, ...res[0].data };
 
     localStorage.setItem(EnumLocalStorage.ID_SHOP, data.idShop);
     // Se muestra el contenido del aplicativo
-    this.showPages = true;
+    return true;
   }
 }
