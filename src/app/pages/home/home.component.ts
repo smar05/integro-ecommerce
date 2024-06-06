@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { EnumLocalStorage } from 'src/app/enums/enumLocalStorage';
+import { IFireStoreRes } from 'src/app/interfaces/iFireStoreRes';
+import { ProductsService } from 'src/app/services/products.service';
 
 @Component({
   selector: 'app-home',
@@ -7,12 +9,14 @@ import { EnumLocalStorage } from 'src/app/enums/enumLocalStorage';
   styleUrls: ['./home.component.css'],
 })
 export class HomeComponent implements OnInit {
-  constructor() {}
+  constructor(private productsService: ProductsService) {}
 
   ngOnInit(): void {
-    console.log(
-      '🚀 ~ file: home.component.ts:15 ~ HomeComponent ~ ngOnInit ~ localStorage.getItem(EnumLocalStorage.ID_SHOP):',
-      localStorage.getItem(EnumLocalStorage.ID_SHOP)
-    );
+    this.productsService
+      .getDataFS()
+      .toPromise()
+      .then((resp: IFireStoreRes) => {
+        console.log('🚀 ~ HomeComponent ~ .then ~ resp:', resp);
+      });
   }
 }
