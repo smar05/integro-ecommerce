@@ -3,7 +3,7 @@ import { environment } from 'src/environments/environment';
 import { FireStoreService } from './fire-store.service';
 import { QueryFn } from '@angular/fire/compat/firestore';
 import { Observable } from 'rxjs';
-import { Iproducts } from '../interfaces/i-products';
+import { EnumProductImg, Iproducts } from '../interfaces/i-products';
 import { StorageService } from './storage.service';
 import { EnumLocalStorage } from '../enums/enumLocalStorage';
 import { IQueryFnWhere, functions } from '../helpers/functions';
@@ -13,7 +13,9 @@ import { IQueryFnWhere, functions } from '../helpers/functions';
 })
 export class ProductsService {
   private urlProducts: string = environment.collections.products;
-  private urlImage: string = `${environment.urlStorage.img}/products`;
+  private urlImage: string = `${
+    environment.urlStorage.img
+  }/${localStorage.getItem(EnumLocalStorage.ID_SHOP)}/products`;
 
   constructor(
     private storageService: StorageService,
@@ -98,9 +100,9 @@ export class ProductsService {
    * @memberof ProductsService
    */
   public async getImage(url: string): Promise<string> {
-    let image: any = (
-      await this.storageService.getStorageListAll(`${this.urlImage}/${url}`)
-    ).items[0];
+    let a = `${this.urlImage}/${url}`;
+    console.log('🚀 ~ ProductsService ~ a ~ a:', a);
+    let image: any = (await this.storageService.getStorageListAll(a)).items[0];
 
     if (image) {
       return this.storageService.getDownloadURL(image);
