@@ -4,6 +4,8 @@ import { IFireStoreRes } from './interfaces/iFireStoreRes';
 import { IUrlShops } from './interfaces/iUrlShops';
 import { QueryFn } from '@angular/fire/compat/firestore';
 import { EnumLocalStorage } from './enums/enumLocalStorage';
+import { ShopsDataService } from './services/shops-data.service';
+import { IShopsData } from './interfaces/i-shops-data';
 
 @Component({
   selector: 'app-root',
@@ -14,10 +16,17 @@ export class AppComponent implements OnInit {
   title = 'integro-ecommerce';
   public showPages: boolean = false; // Para mostrar el contenido
 
-  constructor(private urlShopsService: UrlShopsService) {}
+  constructor(
+    private urlShopsService: UrlShopsService,
+    private shopsDataService: ShopsDataService
+  ) {}
 
   async ngOnInit(): Promise<void> {
-    this.showPages = await this.obtenerIdShop();
+    let show: boolean = false;
+    show = await this.obtenerIdShop();
+    await this.getShopsData();
+
+    this.showPages = show;
   }
 
   /**
@@ -48,5 +57,25 @@ export class AppComponent implements OnInit {
     localStorage.setItem(EnumLocalStorage.ID_SHOP, data.idShop);
     // Se muestra el contenido del aplicativo
     return true;
+  }
+
+  private async getShopsData(): Promise<void> {
+    let res: IFireStoreRes[] = [];
+    let shopData: IShopsData = {} as any;
+    let qf: QueryFn = (ref) => ref.limit(1);
+
+    try {
+      res = await this.shopsDataService.getDataFS(qf).toPromise();
+    } catch (error) {
+      throw new Error(error);
+    }
+
+    shopData = { id: res[0].id, ...res[0].data };
+
+    localStorage.setItem(EnumLocalStorage.SHOP_DATA, JSON.stringify(shopData));
+
+    let html: HTMLElement = document.documentElement;
+
+    html.style.border = `12px solid ${shopData.border_color || 'black'}`;
   }
 }

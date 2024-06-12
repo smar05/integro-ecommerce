@@ -101,7 +101,6 @@ export class ProductsService {
    */
   public async getImage(url: string): Promise<string> {
     let a = `${this.urlImage}/${url}`;
-    console.log('🚀 ~ ProductsService ~ a ~ a:', a);
     let image: any = (await this.storageService.getStorageListAll(a)).items[0];
 
     if (image) {

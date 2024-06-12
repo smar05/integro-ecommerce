@@ -1,50 +1,52 @@
-<div class="container">
-  <!-- #masthead -->
-  <div id="content" class="site-content">
-    <div id="primary" class="content-area column full">
-      <main id="main" class="site-main" role="main">
-        <p class="woocommerce-result-count">Showing 1–8 of 12 results</p>
-        <form class="woocommerce-ordering" method="get">
-          <select name="orderby" class="orderby">
-            <option value="menu_order" selected="selected">
-              Default sorting
-            </option>
-            <option value="popularity">Sort by popularity</option>
-            <option value="rating">Sort by average rating</option>
-            <option value="date">Sort by newness</option>
-            <option value="price">Sort by price: low to high</option>
-            <option value="price-desc">Sort by price: high to low</option>
-          </select>
-        </form>
-        <ul class="products">
-          <li class="product" *ngFor="let product of this.products">
-            <a href="shop-single.html">
-              <!--<span class="onsale">Sale!</span>-->
-              <img
-                src="{{ this.productsImages.get(product.id + '-main') }}"
-                alt=""
-              />
-              <h3>{{ product.name }}</h3>
-              <span class="price"
-                ><span class="amount">{{
-                  product.price | currency
-                }}</span></span
-              > </a
-            ><a href="#" class="button">Add to cart</a>
-          </li>
-        </ul>
-        <nav class="woocommerce-pagination">
-          <ul class="page-numbers">
-            <li><span class="page-numbers current">1</span></li>
-            <li><a class="page-numbers" href="#">2</a></li>
-            <li><a class="next page-numbers" href="#">→</a></li>
+<section id="home">
+  <div class="container">
+    <!-- #masthead -->
+    <div id="content" class="site-content">
+      <div id="primary" class="content-area column full">
+        <main id="main" class="site-main" role="main">
+          <p class="woocommerce-result-count">Showing 1–8 of 12 results</p>
+          <form class="woocommerce-ordering" method="get">
+            <select name="orderby" class="orderby">
+              <option value="menu_order" selected="selected">
+                Default sorting
+              </option>
+              <option value="popularity">Sort by popularity</option>
+              <option value="rating">Sort by average rating</option>
+              <option value="date">Sort by newness</option>
+              <option value="price">Sort by price: low to high</option>
+              <option value="price-desc">Sort by price: high to low</option>
+            </select>
+          </form>
+          <ul class="products">
+            <li class="product" *ngFor="let product of this.products">
+              <a href="shop-single.html">
+                <!--<span class="onsale">Sale!</span>-->
+                <img
+                  src="{{ this.productsImages.get(product.id + '-main') }}"
+                  alt=""
+                />
+                <h3>{{ product.name }}</h3>
+                <span class="price"
+                  ><span class="amount">{{
+                    product.price | currency
+                  }}</span></span
+                > </a
+              ><a href="#" class="button">Add to cart</a>
+            </li>
           </ul>
-        </nav>
-      </main>
-      <!-- #main -->
+          <nav class="woocommerce-pagination">
+            <ul class="page-numbers">
+              <li><span class="page-numbers current">1</span></li>
+              <li><a class="page-numbers" href="#">2</a></li>
+              <li><a class="next page-numbers" href="#">→</a></li>
+            </ul>
+          </nav>
+        </main>
+        <!-- #main -->
+      </div>
+      <!-- #primary -->
     </div>
-    <!-- #primary -->
+    <!-- #content -->
   </div>
-  <!-- #content -->
-</div>
-<!-- .container -->
+  <!-- .container -->
+</section>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { QueryFn } from '@angular/fire/compat/firestore';
 import { EnumLocalStorage } from 'src/app/enums/enumLocalStorage';
 import { EnumProductImg, Iproducts } from 'src/app/interfaces/i-products';
+import { IShopsData } from 'src/app/interfaces/i-shops-data';
 import { IFireStoreRes } from 'src/app/interfaces/iFireStoreRes';
 import { ProductsService } from 'src/app/services/products.service';
 
@@ -13,11 +14,22 @@ import { ProductsService } from 'src/app/services/products.service';
 export class HomeComponent implements OnInit {
   public products: Iproducts[] = [];
   public productsImages: Map<string, string> = new Map();
+  public shopData: IShopsData = null;
 
   constructor(private productsService: ProductsService) {}
 
   async ngOnInit(): Promise<void> {
+    this.editHome();
     await this.getProducts();
+  }
+
+  private editHome(): void {
+    this.shopData = JSON.parse(
+      localStorage.getItem(EnumLocalStorage.SHOP_DATA) || null
+    );
+    let home: HTMLElement = document.querySelector('#home');
+
+    home.style.backgroundColor = this.shopData.back_color || 'white';
   }
 
   private async getProducts(): Promise<void> {

@@ -35,6 +35,7 @@ export const environment = {
     versions: 'versions',
     alerts: 'alerts',
     url_shops: 'url_shops',
+    shops_data: 'shops_data',
   },
   version: '1.0.0',
   apiKeyLocation: 'dU1Pc1lYSnBVZDVqcVpSYjhVSkswTGhWTWlRWVZaUHpIdFBuemhINA==',
