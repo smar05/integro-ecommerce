@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { QueryFn } from '@angular/fire/compat/firestore';
 import { ActivatedRoute } from '@angular/router';
 import {
+  EnumProductImg,
   EnumProductReviewType,
   Iproducts,
 } from 'src/app/interfaces/i-products';
@@ -16,6 +17,7 @@ import { ProductsService } from 'src/app/services/products.service';
 export class ProductComponent implements OnInit {
   private urlProduct: string = '';
   public product: Iproducts = null;
+  public urlImg: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -35,8 +37,15 @@ export class ProductComponent implements OnInit {
         .where('feedback', '==', EnumProductReviewType.approved)
         .limit(1);
 
-    this.productService.getDataFS(qf).subscribe((res: IFireStoreRes[]) => {
-      this.product = { id: res[0].id, ...res[0].data };
-    });
+    this.productService
+      .getDataFS(qf)
+      .subscribe(async (res: IFireStoreRes[]) => {
+        this.product = { id: res[0].id, ...res[0].data };
+        if (this.product.tags)
+          this.product.tags = JSON.parse(this.product.tags);
+        let url: string = `${this.product.id}/${EnumProductImg.main}`;
+
+        if (url) this.urlImg = await this.productService.getImage(url);
+      });
   }
 }

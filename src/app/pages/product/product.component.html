@@ -5,25 +5,23 @@
         <div id="container">
           <div id="content" role="main">
             <nav class="woocommerce-breadcrumb" itemprop="breadcrumb">
-              <a href="#">Home</a> / <a href="#">Clothing</a> / Beige Jacket
+              <a routerLink="/home">Home</a> /
+              <a>{{ this.product.category }}</a>
             </nav>
             <div itemscope itemtype="http://schema.org/Product" class="product">
               <div class="images">
                 <a
-                  href=""
                   itemprop="image"
                   class="woocommerce-main-image zoom"
                   title=""
                   data-rel="prettyPhoto"
                 >
-                  <img
-                    src="https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcSxIPEOUvOcTArN-bMuulCe4AQUXJVLx_etJ3mYIpW2KbCOceiXSoqAjp8GkdmgZbnbY9TPL1QTgM6r1wEvclLAnlql5Ds2uvTkLS59UthHJHekgKqR1rSPbfM&usqp=CAE"
-                    alt=""
+                  <img [src]="this.urlImg" alt=""
                 /></a>
               </div>
               <div class="summary entry-summary">
                 <h1 itemprop="name" class="product_title entry-title">
-                  Beige Jacket
+                  {{ this.product?.name }}
                 </h1>
                 <div
                   class="woocommerce-product-rating"
@@ -48,24 +46,17 @@
                   itemtype="http://schema.org/Offer"
                 >
                   <p class="price">
-                    <span class="amount">$35.00</span>
+                    <span class="amount">{{
+                      this.product?.price | currency
+                    }}</span>
                   </p>
                   <meta itemprop="price" content="35" />
                   <meta itemprop="priceCurrency" content="USD" />
-                  <link
-                    itemprop="availability"
-                    href="http://schema.org/InStock"
-                  />
                 </div>
-                <div itemprop="description">
-                  <p>
-                    Pellentesque habitant morbi tristique senectus et netus et
-                    malesuada fames ac turpis egestas. Vestibulum tortor quam,
-                    feugiat vitae, ultricies eget, tempor sit amet, ante. Donec
-                    eu libero sit amet quam egestas semper. Aenean ultricies mi
-                    vitae est. Mauris placerat eleifend leo.
-                  </p>
-                </div>
+                <div
+                  itemprop="description"
+                  [innerHTML]="this.product?.description"
+                ></div>
                 <form class="cart" method="post" enctype="multipart/form-data">
                   <div class="quantity">
                     <input
@@ -89,8 +80,10 @@
                 </form>
                 <div class="product_meta">
                   <span class="posted_in"
-                    >Categories: <a href="#" rel="tag">Clothing</a>,
-                    <a href="#" rel="tag">Hoodies</a>
+                    >Tags:
+                    <ng-container *ngFor="let tag of this.product?.tags">
+                      <a rel="tag">{{ tag }}</a>
+                    </ng-container>
                   </span>
                 </div>
               </div>
