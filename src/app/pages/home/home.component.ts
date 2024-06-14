@@ -1,7 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { QueryFn } from '@angular/fire/compat/firestore';
+import { Router } from '@angular/router';
+import { EnumRutas } from 'src/app/enums/enum-rutas';
 import { EnumLocalStorage } from 'src/app/enums/enumLocalStorage';
-import { EnumProductImg, Iproducts } from 'src/app/interfaces/i-products';
+import {
+  EnumProductImg,
+  EnumProductReviewType,
+  Iproducts,
+} from 'src/app/interfaces/i-products';
 import { IShopsData } from 'src/app/interfaces/i-shops-data';
 import { IFireStoreRes } from 'src/app/interfaces/iFireStoreRes';
 import { ProductsService } from 'src/app/services/products.service';
@@ -16,7 +22,10 @@ export class HomeComponent implements OnInit {
   public productsImages: Map<string, string> = new Map();
   public shopData: IShopsData = null;
 
-  constructor(private productsService: ProductsService) {}
+  constructor(
+    private productsService: ProductsService,
+    private router: Router
+  ) {}
 
   async ngOnInit(): Promise<void> {
     this.editHome();
@@ -34,7 +43,11 @@ export class HomeComponent implements OnInit {
 
   private async getProducts(): Promise<void> {
     let resp: IFireStoreRes[] = [];
-    let qf: QueryFn = (ref) => ref.limit(30);
+    let qf: QueryFn = (ref) =>
+      ref
+        .where('delete', '==', false)
+        .where('feedback', '==', EnumProductReviewType.approved)
+        .limit(30);
 
     try {
       resp = await this.productsService.getDataFS(qf).toPromise();
@@ -69,5 +82,9 @@ export class HomeComponent implements OnInit {
         this.productsImages.set(set, '');
       }
     }
+  }
+
+  public goToProduct(id: string): void {
+    this.router.navigate([`/${EnumRutas.PRODUCT}/${id}`]);
   }
 }

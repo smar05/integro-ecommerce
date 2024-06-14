@@ -1,14 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeRoutingModule } from './home/home-routing.module';
+import { EnumRutas } from '../enums/enum-rutas';
 
 const routes: Routes = [
   {
-    path: 'home',
+    path: EnumRutas.HOME,
     loadChildren: () => import('./home/home.module').then((m) => m.HomeModule),
   },
   {
-    path: 'product',
+    path: EnumRutas.PRODUCT,
     loadChildren: () =>
       import('./product/product.module').then((m) => m.ProductModule),
   },

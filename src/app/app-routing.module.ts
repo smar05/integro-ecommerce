@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PagesRoutingModule } from './pages/pages-routing.module';
+import { EnumRutas } from './enums/enum-rutas';
 
 const routes: Routes = [
   {
     path: '**',
-    redirectTo: 'home',
+    redirectTo: EnumRutas.HOME,
     pathMatch: 'full',
   },
 ];

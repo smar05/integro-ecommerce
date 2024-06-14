@@ -19,7 +19,7 @@
           </form>
           <ul class="products">
             <li class="product" *ngFor="let product of this.products">
-              <a href="shop-single.html">
+              <a (click)="this.goToProduct(product.url)">
                 <!--<span class="onsale">Sale!</span>-->
                 <img
                   src="{{ this.productsImages.get(product.id + '-main') }}"
@@ -31,7 +31,7 @@
                     product.price | currency
                   }}</span></span
                 > </a
-              ><a href="#" class="button">Add to cart</a>
+              ><a class="button">Add to cart</a>
             </li>
           </ul>
           <nav class="woocommerce-pagination">
