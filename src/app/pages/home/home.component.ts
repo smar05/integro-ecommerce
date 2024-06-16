@@ -3,6 +3,7 @@ import { QueryFn } from '@angular/fire/compat/firestore';
 import { Router } from '@angular/router';
 import { EnumRutas } from 'src/app/enums/enum-rutas';
 import { EnumLocalStorage } from 'src/app/enums/enumLocalStorage';
+import { ICart } from 'src/app/interfaces/i-cart';
 import {
   EnumProductImg,
   EnumProductReviewType,
@@ -47,6 +48,7 @@ export class HomeComponent implements OnInit {
       ref
         .where('delete', '==', false)
         .where('feedback', '==', EnumProductReviewType.approved)
+        .where('stock', '>=', 1)
         .limit(30);
 
     try {
@@ -86,5 +88,37 @@ export class HomeComponent implements OnInit {
 
   public goToProduct(id: string): void {
     this.router.navigate([`/${EnumRutas.PRODUCT}/${id}`]);
+  }
+
+  public validarQuantity(product: Iproducts): boolean {
+    if (product && 1 > product.stock) return false;
+
+    return true;
+  }
+
+  public addCarrito(product: Iproducts): void {
+    if (!this.validarQuantity(product)) return;
+
+    let carrito: ICart[] = [];
+
+    // Obtener el carrito guardado en local
+    if (localStorage.getItem(EnumLocalStorage.CART)) {
+      let carritoLocal: ICart[] = JSON.parse(
+        localStorage.getItem(EnumLocalStorage.CART)
+      );
+      carrito.concat(carritoLocal);
+    }
+
+    // Buscar si este producto ya se guardo en el carrito
+    let index: number = carrito.findIndex(
+      (cart: ICart) => cart.product.id === product.id
+    );
+    if (index) carrito.splice(index, 1);
+
+    // Guardar el producto en el carrito
+    carrito.push({ product: product, quantity: 1 } as ICart);
+    localStorage.setItem(EnumLocalStorage.CART, JSON.stringify(carrito));
+
+    this.router.navigate([`/${EnumRutas.CHECKOUT}`]);
   }
 }

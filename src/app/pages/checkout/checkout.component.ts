@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { EnumLocalStorage } from 'src/app/enums/enumLocalStorage';
 
 @Component({
   selector: 'app-checkout',
@@ -11,7 +12,14 @@ export class CheckoutComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getCartLocal();
+  }
 
   public eliminarCartItem(a: any): void {}
+
+  public getCartLocal(): void {
+    let cart = JSON.parse(localStorage.getItem(EnumLocalStorage.CART));
+    console.log('🚀 ~ CheckoutComponent ~ getCartLocal ~ cart:', cart);
+  }
 }

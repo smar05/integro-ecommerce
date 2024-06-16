@@ -6,7 +6,7 @@
           <div id="content" role="main">
             <nav class="woocommerce-breadcrumb" itemprop="breadcrumb">
               <a routerLink="/home">Home</a> /
-              <a>{{ this.product.category }}</a>
+              <a>{{ this.product?.category }}</a>
             </nav>
             <div itemscope itemtype="http://schema.org/Product" class="product">
               <div class="images">
@@ -63,19 +63,23 @@
                       type="number"
                       step="1"
                       min="1"
-                      max=""
+                      [max]="this.product?.stock"
                       name="quantity"
                       value="1"
                       title="Qty"
                       class="input-text qty text"
                       size="4"
+                      required
+                      [(ngModel)]="this.quantity"
                     />
                   </div>
                   <button
                     type="submit"
                     class="single_add_to_cart_button button alt"
+                    (click)="this.addCarrito()"
+                    [disabled]="!this.validarQuantity()"
                   >
-                    Add to cart
+                    Añadir al carrito
                   </button>
                 </form>
                 <div class="product_meta">

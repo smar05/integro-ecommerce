@@ -31,7 +31,9 @@
                     product.price | currency
                   }}</span></span
                 > </a
-              ><a class="button">Add to cart</a>
+              ><a class="button" (click)="this.addCarrito(product)"
+                >Añadir al carrito</a
+              >
             </li>
           </ul>
           <nav class="woocommerce-pagination">
