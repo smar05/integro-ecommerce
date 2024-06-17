@@ -44,24 +44,34 @@
           <h2 class="text-center mb-3">
             <strong>Detalles de la compra</strong>
           </h2>
-          <div class="ps-block__header d-flex justify-content-between">
-            <p><strong>Producto</strong></p>
-
-            <p><strong>Total</strong></p>
-          </div>
 
           <!--Carrito de compras-->
-          <ng-container>
+          <ng-container *ngIf="this.cart">
             <div class="ps-block__content">
               <table class="table ps-block__products">
                 <tbody>
                   <tr *ngFor="let cartItem of this.cart; let i = index">
                     <td>
-                      <a>{{ cartItem.product?.name }}</a>
+                      <a (click)="this.goToProduct(cartItem.product)">{{
+                        cartItem.product?.name
+                      }}</a>
                       <p>
-                        <strong>Detalle: </strong> <br />
-                        {{ cartItem.detalle }}
+                        <strong>Cantidad: </strong>
                       </p>
+                      <div class="quantity">
+                        <input
+                          type="number"
+                          step="1"
+                          min="1"
+                          [max]="cartItem.product.stock"
+                          name="quantity"
+                          title="Qty"
+                          class="input-text qty text"
+                          size="4"
+                          required
+                          [(ngModel)]="cartItem.quantity"
+                        />
+                      </div>
                     </td>
 
                     <!--Eliminar-->
@@ -70,7 +80,7 @@
                     </td>
 
                     <td class="text-right">
-                      {{ cartItem.price | currency : "USD" }}
+                      {{ cartItem.product.price | currency : "USD" }}
                     </td>
                   </tr>
                 </tbody>

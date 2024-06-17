@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { EnumRutas } from 'src/app/enums/enum-rutas';
 import { EnumLocalStorage } from 'src/app/enums/enumLocalStorage';
+import { ICart } from 'src/app/interfaces/i-cart';
+import { Iproducts } from 'src/app/interfaces/i-products';
 
 @Component({
   selector: 'app-checkout',
@@ -7,10 +11,10 @@ import { EnumLocalStorage } from 'src/app/enums/enumLocalStorage';
   styleUrls: ['./checkout.component.css'],
 })
 export class CheckoutComponent implements OnInit {
-  public cart: any[] = [];
+  public cart: ICart[] = [];
   public total: number = NaN;
 
-  constructor() {}
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
     this.getCartLocal();
@@ -19,7 +23,10 @@ export class CheckoutComponent implements OnInit {
   public eliminarCartItem(a: any): void {}
 
   public getCartLocal(): void {
-    let cart = JSON.parse(localStorage.getItem(EnumLocalStorage.CART));
-    console.log('🚀 ~ CheckoutComponent ~ getCartLocal ~ cart:', cart);
+    this.cart = JSON.parse(localStorage.getItem(EnumLocalStorage.CART)) || [];
+  }
+
+  public goToProduct(product: Iproducts | any): void {
+    this.router.navigate([`/${EnumRutas.PRODUCT}/${product.url}`]);
   }
 }
