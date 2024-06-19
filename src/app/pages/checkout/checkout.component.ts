@@ -1,4 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { EnumGlobalData } from 'src/app/enums/enum-global-data';
 import { EnumRutas } from 'src/app/enums/enum-rutas';
@@ -14,8 +19,118 @@ import { GlobalDataService } from 'src/app/services/global-data.service';
 export class CheckoutComponent implements OnInit {
   public cart: ICart[] = [];
   public total: number = NaN;
+  public f: UntypedFormGroup = this.form.group({
+    name: [
+      '',
+      {
+        validators: [
+          Validators.required,
+          Validators.minLength(5),
+          Validators.maxLength(50),
+          Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ'´`-\s]+$/),
+        ],
+      },
+    ],
+    idType: ['', { validators: [Validators.required] }],
+    idValue: [
+      '',
+      {
+        validators: [
+          Validators.required,
+          Validators.minLength(10),
+          Validators.maxLength(14),
+          Validators.pattern(/^\d{1,3}( \d{3})*$/),
+        ],
+      },
+    ],
+    email: [
+      '',
+      {
+        validarors: [
+          Validators.required,
+          Validators.email,
+          Validators.minLength(5),
+          Validators.maxLength(100),
+          Validators.pattern(
+            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+          ),
+        ],
+      },
+    ],
+    cellphone: [
+      '',
+      {
+        validators: [
+          Validators.required,
+          Validators.minLength(7),
+          Validators.maxLength(10),
+          Validators.pattern(/^\d+$/),
+        ],
+      },
+    ],
+    address: [
+      '',
+      {
+        validators: [
+          Validators.required,
+          Validators.minLength(5),
+          Validators.maxLength(50),
+          Validators.pattern(/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ.,#\-\/\s]+$/),
+        ],
+      },
+    ],
+    country: ['', [Validators.required]],
+    state: ['', [Validators.required]],
+    city: ['', [Validators.required]],
+  });
 
-  constructor(private router: Router, private globalData: GlobalDataService) {}
+  //Validaciones personalizadas
+  get name() {
+    return this.f.controls['name'];
+  }
+
+  get idType() {
+    return this.f.controls['idType'];
+  }
+
+  get idValue() {
+    return this.f.controls['idValue'];
+  }
+
+  get email() {
+    return this.f.controls['email'];
+  }
+
+  get cellphone() {
+    return this.f.controls['cellphone'];
+  }
+
+  get address() {
+    return this.f.controls['address'];
+  }
+
+  get country() {
+    return this.f.controls['country'];
+  }
+
+  get state() {
+    return this.f.controls['state'];
+  }
+
+  get city() {
+    return this.f.controls['city'];
+  }
+
+  public tiposDeDocumentos: string[] = ['Cedula de identidad', 'Pasaporte'];
+  public paises: any[] = [];
+  public estados: any[] = [];
+  public ciudades: any[] = [];
+
+  constructor(
+    private router: Router,
+    private globalData: GlobalDataService,
+    private form: UntypedFormBuilder
+  ) {}
 
   ngOnInit(): void {
     this.getCartLocal();

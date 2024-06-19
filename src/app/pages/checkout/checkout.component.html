@@ -14,25 +14,171 @@
     <div class="col-lg-6">
       <div class="card">
         <ng-container>
-          <div class="card-body">
-            <h2 class="text-center mb-3">
-              <strong>Detalles de facturación</strong>
-            </h2>
-            <!--nombre-->
-            <label for="name"><strong>Nombre</strong></label>
-            <p>this.user.name</p>
+          <div class="card-body pt-0" [formGroup]="f">
+            <div class="card-text">
+              <div class="mt-2">
+                <small for="name" class="form-label color-blue">Nombre</small>
+                <input
+                  type="text"
+                  class="form-control py-3"
+                  id="name"
+                  placeholder="Nombre"
+                  formControlName="name"
+                  minlength="5"
+                  maxlength="50"
+                  required=""
+                  [ngClass]="{
+                    'is-invalid': name.invalid
+                  }"
+                />
+              </div>
 
-            <!--Correo-->
-            <label for="email"><strong>Correo</strong></label>
-            <p>this.user.email</p>
+              <div class="mt-2">
+                <small for="idType" class="form-label color-blue"
+                  >Tipo de documento</small
+                >
+                <select
+                  class="form-select py-3"
+                  id="idType"
+                  formControlName="idType"
+                  [ngClass]="{
+                    'is-invalid': idType.invalid
+                  }"
+                >
+                  <option value="" disabled selected>Tipo de documento</option>
+                  <option
+                    *ngFor="let tipoDocumento of this.tiposDeDocumentos"
+                    [value]="tipoDocumento"
+                  >
+                    {{ tipoDocumento }}
+                  </option>
+                </select>
+              </div>
 
-            <!--Celular-->
-            <label for="celphone"><strong>Celular</strong></label>
-            <p>this.user.celphone</p>
+              <div class="mt-2">
+                <small for="idValue" class="form-label color-blue"
+                  >Número de documento</small
+                >
+                <input
+                  type="text"
+                  class="form-control py-3"
+                  id="idValue"
+                  placeholder="Ingrese el número de documento"
+                  formControlName="idValue"
+                  minlength="10"
+                  maxlength="14"
+                  [ngClass]="{
+                    'is-invalid': idValue.invalid
+                  }"
+                />
+              </div>
 
-            <!--chatId-->
-            <label for="chatId"><strong>Id de Telegram</strong></label>
-            <p>this.user.chatId</p>
+              <div class="mt-2">
+                <small for="email" class="form-label">Correo</small>
+                <input
+                  type="text"
+                  class="form-control py-3"
+                  id="email"
+                  placeholder="Correo"
+                  formControlName="email"
+                  minlength="5"
+                  maxlength="50"
+                  required
+                  [ngClass]="{
+                    'is-invalid': email.invalid
+                  }"
+                />
+              </div>
+
+              <div class="mt-2">
+                <small for="cellphone" class="form-label color-blue"
+                  >Celular</small
+                >
+                <input
+                  type="text"
+                  class="form-control py-3"
+                  id="cellphone"
+                  placeholder="Celular"
+                  formControlName="cellphone"
+                  minlength="7"
+                  maxlength="10"
+                  required
+                  [ngClass]="{
+                    'is-invalid': cellphone.invalid
+                  }"
+                />
+              </div>
+
+              <div class="mt-2">
+                <small for="address" class="form-label color-blue"
+                  >Direccion</small
+                >
+                <input
+                  type="text"
+                  class="form-control py-3"
+                  id="address"
+                  placeholder="Direccion"
+                  formControlName="address"
+                  minlength="5"
+                  maxlength="50"
+                  required
+                  [ngClass]="{
+                    'is-invalid': address.invalid
+                  }"
+                />
+              </div>
+
+              <div class="mt-2">
+                <small for="country" class="form-label color-blue">Pais</small>
+                <select
+                  class="form-select py-3"
+                  id="country"
+                  formControlName="country"
+                  [ngClass]="{
+                    'is-invalid': country.invalid
+                  }"
+                >
+                  <option value="" disabled selected>Pais</option>
+                  <option *ngFor="let pais of this.paises" [value]="pais">
+                    {{ pais }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="mt-2">
+                <small for="state" class="form-label color-blue">Estado</small>
+                <select
+                  class="form-select py-3"
+                  id="state"
+                  formControlName="state"
+                  [ngClass]="{
+                    'is-invalid': state.invalid
+                  }"
+                >
+                  <option value="" disabled selected>Estado</option>
+                  <option *ngFor="let estado of this.estados" [value]="estado">
+                    {{ estado }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="mt-2">
+                <small for="city" class="form-label color-blue">Ciudad</small>
+                <select
+                  class="form-select py-3"
+                  id="city"
+                  formControlName="city"
+                  [ngClass]="{
+                    'is-invalid': city.invalid
+                  }"
+                >
+                  <option value="" disabled selected>Ciudad</option>
+                  <option *ngFor="let ciudad of this.ciudades" [value]="ciudad">
+                    {{ ciudad }}
+                  </option>
+                </select>
+              </div>
+            </div>
           </div>
         </ng-container>
       </div>
