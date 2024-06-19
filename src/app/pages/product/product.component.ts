@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { QueryFn } from '@angular/fire/compat/firestore';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EnumGlobalData } from 'src/app/enums/enum-global-data';
 import { EnumRutas } from 'src/app/enums/enum-rutas';
 import { EnumLocalStorage } from 'src/app/enums/enumLocalStorage';
 import { ICart } from 'src/app/interfaces/i-cart';
@@ -10,6 +11,7 @@ import {
   Iproducts,
 } from 'src/app/interfaces/i-products';
 import { IFireStoreRes } from 'src/app/interfaces/iFireStoreRes';
+import { GlobalDataService } from 'src/app/services/global-data.service';
 import { ProductsService } from 'src/app/services/products.service';
 
 @Component({
@@ -26,7 +28,8 @@ export class ProductComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private productService: ProductsService,
-    private router: Router
+    private router: Router,
+    private globalData: GlobalDataService
   ) {}
 
   ngOnInit(): void {
@@ -71,22 +74,18 @@ export class ProductComponent implements OnInit {
     let carrito: ICart[] = [];
 
     // Obtener el carrito guardado en local
-    if (localStorage.getItem(EnumLocalStorage.CART)) {
-      let carritoLocal: ICart[] = JSON.parse(
-        localStorage.getItem(EnumLocalStorage.CART)
-      );
-      carrito.concat(carritoLocal);
-    }
+    let cartData: ICart[] = this.globalData.getData(EnumGlobalData.CART);
+    if (cartData) carrito = cartData;
 
     // Buscar si este producto ya se guardo en el carrito
     let index: number = carrito.findIndex(
       (cart: ICart) => cart.product.id === this.product.id
     );
-    if (index) carrito.splice(index, 1);
+    if (index >= 0) carrito.splice(index, 1);
 
     // Guardar el producto en el carrito
     carrito.push({ product: this.product, quantity: this.quantity } as ICart);
-    localStorage.setItem(EnumLocalStorage.CART, JSON.stringify(carrito));
+    this.globalData.setData(EnumGlobalData.CART, carrito);
 
     this.router.navigate([`/${EnumRutas.CHECKOUT}`]);
   }

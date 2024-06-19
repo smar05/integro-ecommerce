@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { EnumGlobalData } from 'src/app/enums/enum-global-data';
 import { EnumRutas } from 'src/app/enums/enum-rutas';
-import { EnumLocalStorage } from 'src/app/enums/enumLocalStorage';
 import { ICart } from 'src/app/interfaces/i-cart';
 import { Iproducts } from 'src/app/interfaces/i-products';
+import { GlobalDataService } from 'src/app/services/global-data.service';
 
 @Component({
   selector: 'app-checkout',
@@ -14,7 +15,7 @@ export class CheckoutComponent implements OnInit {
   public cart: ICart[] = [];
   public total: number = NaN;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private globalData: GlobalDataService) {}
 
   ngOnInit(): void {
     this.getCartLocal();
@@ -23,7 +24,7 @@ export class CheckoutComponent implements OnInit {
   public eliminarCartItem(a: any): void {}
 
   public getCartLocal(): void {
-    this.cart = JSON.parse(localStorage.getItem(EnumLocalStorage.CART)) || [];
+    this.cart = this.globalData.getData(EnumGlobalData.CART) || [];
   }
 
   public goToProduct(product: Iproducts | any): void {
