@@ -21,7 +21,17 @@ export class CheckoutComponent implements OnInit {
     this.getCartLocal();
   }
 
-  public eliminarCartItem(a: any): void {}
+  public eliminarCartItem(cartItem: ICart): void {
+    let index: number = this.cart.findIndex(
+      (cart: ICart) => cart.product.id === cartItem.product.id
+    );
+
+    if (index < 0) return;
+
+    this.cart.splice(index, 1);
+
+    this.globalData.setData(EnumGlobalData.CART, this.cart);
+  }
 
   public getCartLocal(): void {
     this.cart = this.globalData.getData(EnumGlobalData.CART) || [];
