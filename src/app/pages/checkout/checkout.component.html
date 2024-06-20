@@ -137,15 +137,24 @@
                   [ngClass]="{
                     'is-invalid': country.invalid
                   }"
+                  (change)="this.countryChange()"
                 >
                   <option value="" disabled selected>Pais</option>
-                  <option *ngFor="let pais of this.paises" [value]="pais">
-                    {{ pais }}
+                  <option
+                    *ngFor="let pais of this.allCountries"
+                    [value]="pais.iso2"
+                  >
+                    {{ pais.name }}
                   </option>
                 </select>
               </div>
 
-              <div class="mt-2">
+              <div
+                class="mt-2"
+                *ngIf="
+                  this.country.value && this.allStatesByCountry?.length > 0
+                "
+              >
                 <small for="state" class="form-label color-blue">Estado</small>
                 <select
                   class="form-select py-3"
@@ -154,15 +163,26 @@
                   [ngClass]="{
                     'is-invalid': state.invalid
                   }"
+                  (change)="this.stateChange()"
                 >
                   <option value="" disabled selected>Estado</option>
-                  <option *ngFor="let estado of this.estados" [value]="estado">
-                    {{ estado }}
+                  <option
+                    *ngFor="let estado of this.allStatesByCountry"
+                    [value]="estado.iso2"
+                  >
+                    {{ estado.name }}
                   </option>
                 </select>
               </div>
 
-              <div class="mt-2">
+              <div
+                class="mt-2"
+                *ngIf="
+                  this.country.value &&
+                  this.state.value &&
+                  this.allCities?.length > 0
+                "
+              >
                 <small for="city" class="form-label color-blue">Ciudad</small>
                 <select
                   class="form-select py-3"
@@ -173,8 +193,11 @@
                   }"
                 >
                   <option value="" disabled selected>Ciudad</option>
-                  <option *ngFor="let ciudad of this.ciudades" [value]="ciudad">
-                    {{ ciudad }}
+                  <option
+                    *ngFor="let ciudad of this.allCities"
+                    [value]="ciudad.id"
+                  >
+                    {{ ciudad.name }}
                   </option>
                 </select>
               </div>

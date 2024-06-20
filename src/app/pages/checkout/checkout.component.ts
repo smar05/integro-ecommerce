@@ -8,8 +8,12 @@ import { Router } from '@angular/router';
 import { EnumGlobalData } from 'src/app/enums/enum-global-data';
 import { EnumRutas } from 'src/app/enums/enum-rutas';
 import { ICart } from 'src/app/interfaces/i-cart';
+import { ICities } from 'src/app/interfaces/i-cities';
+import { ICountries } from 'src/app/interfaces/i-contries';
 import { Iproducts } from 'src/app/interfaces/i-products';
+import { IState } from 'src/app/interfaces/i-state';
 import { GlobalDataService } from 'src/app/services/global-data.service';
+import { LocationService } from 'src/app/services/location.service';
 
 @Component({
   selector: 'app-checkout',
@@ -39,7 +43,7 @@ export class CheckoutComponent implements OnInit {
           Validators.required,
           Validators.minLength(10),
           Validators.maxLength(14),
-          Validators.pattern(/^\d{1,3}( \d{3})*$/),
+          Validators.pattern(/^\d+$/),
         ],
       },
     ],
@@ -122,18 +126,20 @@ export class CheckoutComponent implements OnInit {
   }
 
   public tiposDeDocumentos: string[] = ['Cedula de identidad', 'Pasaporte'];
-  public paises: any[] = [];
-  public estados: any[] = [];
-  public ciudades: any[] = [];
+  public allCountries: ICountries[] = [];
+  public allStatesByCountry: IState[] = [];
+  public allCities: ICities[] = [];
 
   constructor(
     private router: Router,
     private globalData: GlobalDataService,
-    private form: UntypedFormBuilder
+    private form: UntypedFormBuilder,
+    private locationService: LocationService
   ) {}
 
   ngOnInit(): void {
     this.getCartLocal();
+    this.getCountries();
   }
 
   public eliminarCartItem(cartItem: ICart): void {
@@ -154,5 +160,40 @@ export class CheckoutComponent implements OnInit {
 
   public goToProduct(product: Iproducts | any): void {
     this.router.navigate([`/${EnumRutas.PRODUCT}/${product.url}`]);
+  }
+
+  private async getCountries(): Promise<void> {
+    try {
+      this.allCountries = await this.locationService.getAllContries();
+    } catch (error) {
+      this.allCountries = [];
+    }
+  }
+
+  public async countryChange(): Promise<void> {
+    try {
+      this.state.setValue(null);
+      this.city.setValue(null);
+      this.allStatesByCountry =
+        await this.locationService.getAllStatesByCountry(this.country.value);
+    } catch (error) {
+      this.state.setValue(null);
+      this.city.setValue(null);
+      this.allStatesByCountry = [];
+    }
+  }
+
+  public async stateChange(): Promise<void> {
+    try {
+      this.city.setValue(null);
+      this.allCities = await this.locationService.getAllCitiesByCountryAndState(
+        this.country.value,
+        this.state.value
+      );
+    } catch (error) {
+      this.state.setValue(null);
+      this.city.setValue(null);
+      this.allCities = [];
+    }
   }
 }
