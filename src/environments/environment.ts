@@ -2,7 +2,11 @@
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+import { EnumRutas } from 'src/app/enums/enum-rutas';
+
 const apiKey: string = 'AIzaSyCtV65qh8OjmZ75uNDO1zw0lYlPYsrnjsc';
+const urlProd: string =
+  'https://sexifa-269bf--onlygram-groups-rehu2taa.web.app';
 
 export const environment = {
   production: false,
@@ -36,6 +40,18 @@ export const environment = {
     alerts: 'alerts',
     url_shops: 'url_shops',
     shops_data: 'shops_data',
+    metodos_de_pago: 'metodos_de_pago',
+  },
+  payUCredentials: {
+    merchantId: '508029',
+    action: 'https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu/',
+    accountId: {
+      col: '512321',
+    },
+    responseUrl: `${urlProd}/#/${EnumRutas.CHECKOUT}`,
+    confirmationUrl: 'http://www.test.com/confirmation',
+    apiKey: '4Vj8eK4rloUd272L48hsrarnUA',
+    test: 1,
   },
   version: '1.0.0',
   apiKeyLocation: 'dU1Pc1lYSnBVZDVqcVpSYjhVSkswTGhWTWlRWVZaUHpIdFBuemhINA==',

@@ -1,19 +1,31 @@
 import { Component, OnInit } from '@angular/core';
+import { QueryFn } from '@angular/fire/compat/firestore';
 import {
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Md5 } from 'md5-typescript';
 import { EnumGlobalData } from 'src/app/enums/enum-global-data';
+import { EnumPayMethods } from 'src/app/enums/enum-pay-methods';
 import { EnumRutas } from 'src/app/enums/enum-rutas';
+import { EnumLocalStorage } from 'src/app/enums/enumLocalStorage';
+import { alerts } from 'src/app/helpers/alerts';
 import { ICart } from 'src/app/interfaces/i-cart';
 import { ICities } from 'src/app/interfaces/i-cities';
 import { ICountries } from 'src/app/interfaces/i-contries';
+import {
+  EnumMetodosDePagoStatus,
+  IMetodosDePago,
+} from 'src/app/interfaces/i-metodos-pago';
 import { Iproducts } from 'src/app/interfaces/i-products';
 import { IState } from 'src/app/interfaces/i-state';
+import { IFireStoreRes } from 'src/app/interfaces/iFireStoreRes';
 import { GlobalDataService } from 'src/app/services/global-data.service';
 import { LocationService } from 'src/app/services/location.service';
+import { MetodosDePagoService } from 'src/app/services/metodos-de-pago.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-checkout',
@@ -132,17 +144,21 @@ export class CheckoutComponent implements OnInit {
   public allCountries: ICountries[] = [];
   public allStatesByCountry: IState[] = [];
   public allCities: ICities[] = [];
+  public metodosDePago: IMetodosDePago[] = null;
+  public payMethod: string = '';
 
   constructor(
     private router: Router,
     private globalData: GlobalDataService,
     private form: UntypedFormBuilder,
-    private locationService: LocationService
+    private locationService: LocationService,
+    private metodosDePagoService: MetodosDePagoService
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.getCartLocal();
     this.getCountries();
+    await this.getMetodosDePago();
   }
 
   public eliminarCartItem(cartItem: ICart): void {
@@ -198,5 +214,70 @@ export class CheckoutComponent implements OnInit {
       this.city.setValue(null);
       this.allCities = [];
     }
+  }
+
+  public findMetodoDePago(metodo: EnumPayMethods | string): boolean {
+    if (!(this.metodosDePago && this.metodosDePago.length > 0)) return false;
+
+    return this.metodosDePago.find((mp: IMetodosDePago) => mp.name === metodo)
+      ? true
+      : false;
+  }
+
+  private async getMetodosDePago(): Promise<void> {
+    let qf: QueryFn = (ref) =>
+      ref.where('status', '==', EnumMetodosDePagoStatus.ACTIVE);
+
+    let res: IFireStoreRes[] = null;
+    try {
+      res = await this.metodosDePagoService.getDataFS(qf).toPromise();
+    } catch (error) {
+      console.error('Error: ', error);
+
+      throw error;
+    }
+
+    if (!res) return null;
+
+    this.metodosDePago = res.map((r: IFireStoreRes) => {
+      return { id: r.id, ...r.data };
+    });
+  }
+
+  public pagarPayU(): void {
+    let currency: string = 'USD';
+    let referenceCode: number = Math.ceil(Math.random() * 1000000);
+    let firmaPayU: string = Md5.init(
+      `${environment.payUCredentials.apiKey}~${environment.payUCredentials.merchantId}~${referenceCode}~${this.total}~${currency}`
+    );
+
+    let formPayU: string = `    
+    <form method="post" action="${environment.payUCredentials.action}">
+      <input name="merchantId"      type="hidden"  value="${environment.payUCredentials.merchantId}"   >
+      <input name="accountId"       type="hidden"  value="${environment.payUCredentials.accountId.col}" >
+      <input name="description"     type="hidden"  value="OnlyGram"  >
+      <input name="referenceCode"   type="hidden"  value="${referenceCode}" >
+      <input name="amount"          type="hidden"  value="${this.total}"   >
+      <input name="tax"             type="hidden"  value="0"  >
+      <input name="taxReturnBase"   type="hidden"  value="0" >
+      <input name="currency"        type="hidden"  value="${currency}" >
+      <input name="signature"       type="hidden"  value="${firmaPayU}"  >
+      <input name="test"            type="hidden"  value="${environment.payUCredentials.test}" >
+      <input name="buyerEmail"      type="hidden"  value="${this.email.value}" >
+      <input name="responseUrl"     type="hidden"  value="${environment.payUCredentials.responseUrl}" >
+      <input name="confirmationUrl" type="hidden"  value="${environment.payUCredentials.confirmationUrl}" >
+      <input name="Submit"          type="submit"  value="Continuar"  class"btn btn-primary bg-principal p-0 px-5" id="payu-button">
+    </form>  
+    `;
+
+    alerts.html('Pago por PayU', 'info', formPayU);
+
+    let payBtn = document.querySelector('#payu-button');
+    payBtn.addEventListener('click', function () {
+      localStorage.setItem(
+        EnumLocalStorage.PAYU_PROCESO,
+        new Date().toISOString()
+      );
+    });
   }
 }
