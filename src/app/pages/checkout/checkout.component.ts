@@ -125,7 +125,10 @@ export class CheckoutComponent implements OnInit {
     return this.f.controls['city'];
   }
 
-  public tiposDeDocumentos: string[] = ['Cedula de identidad', 'Pasaporte'];
+  public tiposDeDocumentos: { name: string; value: string }[] = [
+    { name: 'Cedula de identidad', value: 'CC' },
+    { name: 'Pasaporte', value: 'P' },
+  ];
   public allCountries: ICountries[] = [];
   public allStatesByCountry: IState[] = [];
   public allCities: ICities[] = [];
