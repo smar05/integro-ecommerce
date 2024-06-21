@@ -250,6 +250,8 @@ export class CheckoutComponent implements OnInit {
     let firmaPayU: string = Md5.init(
       `${environment.payUCredentials.apiKey}~${environment.payUCredentials.merchantId}~${referenceCode}~${this.total}~${currency}`
     );
+    let total: number = this.calcularTotal();
+    console.log('🚀 ~ CheckoutComponent ~ pagarPayU ~ total:', total);
 
     let formPayU: string = `    
     <form method="post" action="${environment.payUCredentials.action}">
@@ -257,7 +259,7 @@ export class CheckoutComponent implements OnInit {
       <input name="accountId"       type="hidden"  value="${environment.payUCredentials.accountId.col}" >
       <input name="description"     type="hidden"  value="OnlyGram"  >
       <input name="referenceCode"   type="hidden"  value="${referenceCode}" >
-      <input name="amount"          type="hidden"  value="${this.total}"   >
+      <input name="amount"          type="hidden"  value="${total}"   >
       <input name="tax"             type="hidden"  value="0"  >
       <input name="taxReturnBase"   type="hidden"  value="0" >
       <input name="currency"        type="hidden"  value="${currency}" >

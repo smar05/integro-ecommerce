@@ -251,7 +251,7 @@
 
                     <td class="text-right">
                       {{
-                        cartItem.product.price
+                        cartItem.product.price * cartItem.quantity
                           | currency : "COP" : "symbol" : "1.0-0"
                       }}
                     </td>
