@@ -1,9 +1,9 @@
 <div class="container mt-2">
   <div class="row">
     <div class="col-lg-12">
-      <div class="card">
+      <div class="card mb-2">
         <div class="card-body text-center">
-          <h1 class="titulo">
+          <h1 class="titulo text-center">
             <strong>Pasarela de pago</strong>
           </h1>
         </div>
@@ -12,7 +12,7 @@
   </div>
   <div class="row mt-2">
     <div class="col-lg-6">
-      <div class="card">
+      <div class="card mb-2">
         <ng-container>
           <div class="card-body pt-0" [formGroup]="f">
             <div class="card-text">
@@ -65,7 +65,7 @@
                   id="idValue"
                   placeholder="Ingrese el número de documento"
                   formControlName="idValue"
-                  minlength="10"
+                  minlength="8"
                   maxlength="14"
                   [ngClass]="{
                     'is-invalid': idValue.invalid
@@ -208,14 +208,14 @@
     </div>
 
     <div class="col-lg-6">
-      <div class="card">
+      <div class="card mb-2" *ngIf="this.cart?.length > 0">
         <div class="card-body">
           <h2 class="text-center mb-3">
             <strong>Detalles de la compra</strong>
           </h2>
 
           <!--Carrito de compras-->
-          <ng-container *ngIf="this.cart">
+          <ng-container>
             <div class="ps-block__content">
               <table class="table ps-block__products">
                 <tbody>
@@ -239,6 +239,7 @@
                           size="4"
                           required
                           [(ngModel)]="cartItem.quantity"
+                          (input)="this.inputQuantity(i, $event)"
                         />
                       </div>
                     </td>
@@ -249,7 +250,10 @@
                     </td>
 
                     <td class="text-right">
-                      {{ cartItem.product.price | currency : "USD" }}
+                      {{
+                        cartItem.product.price
+                          | currency : "COP" : "symbol" : "1.0-0"
+                      }}
                     </td>
                   </tr>
                 </tbody>
@@ -257,7 +261,9 @@
 
               <h3 class="text-right">
                 <strong>Total: </strong>
-                <span>{{ this.total | currency : "USD" }}</span>
+                <span>{{
+                  this.calcularTotal() | currency : "COP" : "symbol" : "1.0-0"
+                }}</span>
               </h3>
             </div>
           </ng-container>
@@ -265,19 +271,19 @@
       </div>
     </div>
 
-    <div class="row mt-2">
+    <div class="row my-2" *ngIf="this.cart?.length > 0 && this.f.valid">
       <div class="col-lg-6">
-        <div class="card">
+        <div class="card mb-2">
           <div class="card-body">
             <h2 class="text-center mb-3">
               <strong> Metodos de pago </strong>
             </h2>
             <form>
               <ng-container *ngIf="this.findMetodoDePago('payu')">
-                <div class="form-group">
+                <div class="form-check">
                   <div class="ps-radio">
                     <input
-                      class="form-control"
+                      class="form-check-input p-4"
                       type="radio"
                       id="pay-payu"
                       name="payment-method"

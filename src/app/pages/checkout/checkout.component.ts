@@ -53,7 +53,7 @@ export class CheckoutComponent implements OnInit {
       {
         validators: [
           Validators.required,
-          Validators.minLength(10),
+          Validators.minLength(5),
           Validators.maxLength(14),
           Validators.pattern(/^\d+$/),
         ],
@@ -279,5 +279,32 @@ export class CheckoutComponent implements OnInit {
         new Date().toISOString()
       );
     });
+  }
+
+  public calcularTotal(): number {
+    if (this.cart?.length <= 0) return NaN;
+
+    return this.cart.reduce((total: number, cart: ICart) => {
+      return total + cart.product.price * (cart.quantity as number);
+    }, 0);
+  }
+
+  public inputQuantity(index: number, event: Event): void {
+    let cartItem: ICart = this.cart[index];
+
+    // Validar que la cantidad sea mayor a 0
+    let cantidad: number = (event.target as any).value;
+    if (cantidad <= 0) {
+      (event.target as any).value = 1;
+      cartItem.quantity = 1;
+      return;
+    }
+
+    if (!cartItem) return;
+    if (cartItem.product.stock < cantidad) {
+      (event.target as any).value = cartItem.product.stock;
+      cartItem.quantity = cartItem.product.stock;
+      return;
+    }
   }
 }

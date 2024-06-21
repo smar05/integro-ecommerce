@@ -61,7 +61,9 @@ export class HomeComponent implements OnInit {
     }
 
     this.products = resp.map((r: IFireStoreRes) => {
-      return { id: r.id, ...r.data };
+      let product: Iproducts = { id: r.id, ...r.data };
+      if (product.offer) product.offer = JSON.parse(product.offer);
+      return product;
     });
 
     this.products.forEach(async (product: Iproducts) => {
@@ -115,9 +117,15 @@ export class HomeComponent implements OnInit {
     if (index >= 0) carrito.splice(index, 1);
 
     // Guardar el producto en el carrito
+    let price: number = this.getPriceProduct(product);
+    if (price) product.price = price; // Si hay descuento en el producto
     carrito.push({ product: product, quantity: 1 } as ICart);
     this.globalData.setData(EnumGlobalData.CART, carrito);
 
     this.router.navigate([`/${EnumRutas.CHECKOUT}`]);
+  }
+
+  public getPriceProduct(product: Iproducts): number {
+    return this.productsService.calculoPrecioOferta(product);
   }
 }

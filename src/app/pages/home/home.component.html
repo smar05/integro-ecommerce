@@ -20,16 +20,76 @@
           <ul class="products">
             <li class="product" *ngFor="let product of this.products">
               <a (click)="this.goToProduct(product.url)">
-                <!--<span class="onsale">Sale!</span>-->
+                <span
+                  class="onsale"
+                  *ngIf="product.offer && this.getPriceProduct(product)"
+                  >Oferta!</span
+                >
                 <img
                   src="{{ this.productsImages.get(product.id + '-main') }}"
                   alt=""
                 />
                 <h3>{{ product.name }}</h3>
                 <span class="price"
-                  ><span class="amount">{{
-                    product.price | currency
-                  }}</span></span
+                  ><span class="amount">
+                    <ng-container
+                      *ngIf="
+                        product.offer && this.getPriceProduct(product);
+                        else normal
+                      "
+                    >
+                      <ng-container
+                        *ngIf="product.offer[0] === 'Disccount'; else fixed"
+                      >
+                        <p
+                          class="text-muted"
+                          style="text-decoration-line: line-through"
+                        >
+                          {{
+                            product?.price
+                              | currency : "COP" : "symbol" : "1.0-0"
+                          }}
+                          - {{ product.offer[1] }}%
+                        </p>
+                        <p class="h5">
+                          {{
+                            this.getPriceProduct(product)
+                              | currency : "COP" : "symbol" : "1.0-0"
+                          }}
+                        </p>
+                      </ng-container>
+                      <ng-template #fixed>
+                        <p
+                          class="text-muted"
+                          style="text-decoration-line: line-through"
+                        >
+                          {{
+                            product?.price
+                              | currency : "COP" : "symbol" : "1.0-0"
+                          }}
+                          -
+                          {{
+                            product.offer[1]
+                              | currency : "COP" : "symbol" : "1.0-0"
+                          }}
+                        </p>
+                        <p class="h5">
+                          {{
+                            this.getPriceProduct(product)
+                              | currency : "COP" : "symbol" : "1.0-0"
+                          }}
+                        </p>
+                      </ng-template>
+                    </ng-container>
+                    <ng-template #normal>
+                      <p class="h5">
+                        {{
+                          this.product?.price
+                            | currency : "COP" : "symbol" : "1.0-0"
+                        }}
+                      </p>
+                    </ng-template>
+                  </span></span
                 > </a
               ><a class="button" (click)="this.addCarrito(product)"
                 >Añadir al carrito</a

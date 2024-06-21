@@ -10,7 +10,7 @@ export interface Iproducts {
   // horizontal_slider: string;
   name: string;
   offer: string;
-  price: string;
+  price: number;
   reviews: any;
   sales: number;
   shipping: string;

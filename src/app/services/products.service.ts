@@ -7,6 +7,7 @@ import { EnumProductImg, Iproducts } from '../interfaces/i-products';
 import { StorageService } from './storage.service';
 import { EnumLocalStorage } from '../enums/enumLocalStorage';
 import { IQueryFnWhere, functions } from '../helpers/functions';
+import { EnumOfferType } from '../enums/enum-offer-type';
 
 @Injectable({
   providedIn: 'root',
@@ -255,5 +256,42 @@ export class ProductsService {
     returnData.date_updated = new Date();
 
     return returnData;
+  }
+
+  /**
+   * Calcular el precio del producto si tiene oferta
+   *
+   * @param {Iproducts} product
+   * @return {*}  {number}
+   * @memberof ProductsService
+   */
+  public calculoPrecioOferta(product: Iproducts): number {
+    if (product.price && product.offer) {
+      let offer: any[] =
+        typeof product.offer === 'string'
+          ? JSON.parse(product.offer)
+          : product.offer;
+
+      if (offer?.length != 3) return NaN;
+
+      let fechaString: string = offer[2];
+      let fechaOferta: Date = new Date(fechaString);
+      const fechaActual: Date = new Date();
+
+      if (fechaOferta < fechaActual) return NaN;
+
+      switch (offer[0]) {
+        case EnumOfferType.DISCCOUNT:
+          return Math.floor(product.price * (1 - offer[1] / 100) * 100) / 100;
+
+        case EnumOfferType.FIXED:
+          return product.price - offer[1];
+
+        default:
+          return NaN;
+      }
+    }
+
+    return NaN;
   }
 }
