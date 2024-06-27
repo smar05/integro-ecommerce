@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { QueryFn } from '@angular/fire/compat/firestore';
 import {
   UntypedFormBuilder,
@@ -27,12 +27,16 @@ import { LocationService } from 'src/app/services/location.service';
 import { MetodosDePagoService } from 'src/app/services/metodos-de-pago.service';
 import { environment } from 'src/environments/environment';
 
+declare var paypal: any;
+
 @Component({
   selector: 'app-checkout',
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.css'],
 })
 export class CheckoutComponent implements OnInit {
+  @ViewChild('paypal', { static: true })
+  paypalElement!: ElementRef;
   public cart: ICart[] = [];
   public total: number = NaN;
   public f: UntypedFormGroup = this.form.group({
@@ -159,6 +163,8 @@ export class CheckoutComponent implements OnInit {
     this.getCartLocal();
     this.getCountries();
     await this.getMetodosDePago();
+
+    this.paypalData();
   }
 
   public eliminarCartItem(cartItem: ICart): void {
@@ -308,5 +314,40 @@ export class CheckoutComponent implements OnInit {
       cartItem.quantity = cartItem.product.stock;
       return;
     }
+  }
+
+  /**
+   * Metodo para el boton de paypal
+   *
+   * @private
+   * @memberof CheckoutComponent
+   */
+  private paypalData(): void {
+    paypal
+      .Buttons({
+        createOrder: (data: any, actions: any) => {
+          return actions.order.create({
+            purchase_units: [
+              {
+                description: 'Compra en OnlyGram',
+                amount: {
+                  currency_code: 'USD',
+                  value: this.calcularTotal(),
+                },
+              },
+            ],
+          });
+        },
+        onApprove: async (data: any, actions: any) => {},
+        onError: (err: any) => {
+          alerts.basicAlert(
+            'Pago erroneo',
+            'Ha ocurrido un problema en el pago',
+            'error'
+          );
+          console.error(err);
+        },
+      })
+      .render(this.paypalElement.nativeElement);
   }
 }

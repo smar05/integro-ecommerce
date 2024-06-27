@@ -6,7 +6,7 @@ import { EnumRutas } from 'src/app/enums/enum-rutas';
 
 const apiKey: string = 'AIzaSyCtV65qh8OjmZ75uNDO1zw0lYlPYsrnjsc';
 const urlProd: string =
-  'https://sexifa-269bf--onlygram-groups-rehu2taa.web.app';
+  'https://667da06e3437963bb603d59f--profound-arithmetic-a3772e.netlify.app';
 
 export const environment = {
   production: false,
@@ -43,7 +43,7 @@ export const environment = {
     metodos_de_pago: 'metodos_de_pago',
   },
   payUCredentials: {
-    merchantId: '508029',
+    merchantId: '777287',
     action: 'https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu/',
     accountId: {
       col: '512321',

@@ -6,10 +6,10 @@ import { EnumRutas } from 'src/app/enums/enum-rutas';
 
 const apiKey: string = 'AIzaSyCtV65qh8OjmZ75uNDO1zw0lYlPYsrnjsc';
 const urlProd: string =
-  'https://sexifa-269bf--onlygram-groups-rehu2taa.web.app';
+  'https://667da06e3437963bb603d59f--profound-arithmetic-a3772e.netlify.app';
 
 export const environment = {
-  production: false,
+  production: true,
   urlLogin: `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`,
   urlGetUser: `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${apiKey}`,
   urlRefreshToken: `https://securetoken.googleapis.com/v1/token?key=${apiKey}`,
