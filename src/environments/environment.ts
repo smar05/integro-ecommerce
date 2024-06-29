@@ -5,8 +5,7 @@
 import { EnumRutas } from 'src/app/enums/enum-rutas';
 
 const apiKey: string = 'AIzaSyCtV65qh8OjmZ75uNDO1zw0lYlPYsrnjsc';
-const urlProd: string =
-  'https://667da06e3437963bb603d59f--profound-arithmetic-a3772e.netlify.app';
+const urlProd: string = 'https://integro-shop.web.app';
 
 export const environment = {
   production: false,
