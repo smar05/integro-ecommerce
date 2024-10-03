@@ -1,6 +1,7 @@
 export interface Iorders {
-  id: string;
+  id?: string;
   address: string;
+  category: string;
   city: string;
   country: string;
   details: string;
@@ -10,7 +11,11 @@ export interface Iorders {
   phone: string;
   price: string;
   process: string;
+  product: string;
+  quantity: number;
   status: string;
+  url: string;
+  user: string;
   idShop: string;
 }
 
@@ -23,4 +28,11 @@ export enum EnumOrderProcessStatus {
   pending = 'pending',
   ok = 'ok',
   delivered = 'delivered',
+}
+
+export interface IorderProcess {
+  stage: string;
+  status: EnumOrderProcessStatus | string;
+  comment: string;
+  date: string;
 }

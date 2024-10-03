@@ -252,7 +252,7 @@
                     <td class="text-right">
                       {{
                         cartItem.product.price * cartItem.quantity
-                          | currency : "COP" : "symbol" : "1.0-0"
+                          | currency : "USD" : "symbol" : "1.0-0"
                       }}
                     </td>
                   </tr>
@@ -262,7 +262,7 @@
               <h3 class="text-right">
                 <strong>Total: </strong>
                 <span>{{
-                  this.calcularTotal() | currency : "COP" : "symbol" : "1.0-0"
+                  this.calcularTotal() | currency : "USD" : "symbol" : "1.0-0"
                 }}</span>
               </h3>
             </div>

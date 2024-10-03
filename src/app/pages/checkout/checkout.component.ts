@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { Md5 } from 'md5-typescript';
 import { EnumGlobalData } from 'src/app/enums/enum-global-data';
 import { EnumPayMethods } from 'src/app/enums/enum-pay-methods';
+import { EnumPayPalStatus } from 'src/app/enums/enum-paypal-status';
 import { EnumRutas } from 'src/app/enums/enum-rutas';
 import { EnumLocalStorage } from 'src/app/enums/enumLocalStorage';
 import { alerts } from 'src/app/helpers/alerts';
@@ -19,12 +20,21 @@ import {
   EnumMetodosDePagoStatus,
   IMetodosDePago,
 } from 'src/app/interfaces/i-metodos-pago';
+import {
+  EnumOrderProcessStatus,
+  EnumOrderStatus,
+  IorderProcess,
+  Iorders,
+} from 'src/app/interfaces/i-orders';
 import { Iproducts } from 'src/app/interfaces/i-products';
+import { EnumSalesStatus, Isales } from 'src/app/interfaces/i-sales';
 import { IState } from 'src/app/interfaces/i-state';
 import { IFireStoreRes } from 'src/app/interfaces/iFireStoreRes';
 import { GlobalDataService } from 'src/app/services/global-data.service';
 import { LocationService } from 'src/app/services/location.service';
 import { MetodosDePagoService } from 'src/app/services/metodos-de-pago.service';
+import { OrdersService } from 'src/app/services/orders.service';
+import { SalesService } from 'src/app/services/sales.service';
 import { environment } from 'src/environments/environment';
 
 declare var paypal: any;
@@ -156,7 +166,9 @@ export class CheckoutComponent implements OnInit {
     private globalData: GlobalDataService,
     private form: UntypedFormBuilder,
     private locationService: LocationService,
-    private metodosDePagoService: MetodosDePagoService
+    private metodosDePagoService: MetodosDePagoService,
+    private ordersService: OrdersService,
+    private salesService: SalesService
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -338,7 +350,78 @@ export class CheckoutComponent implements OnInit {
             ],
           });
         },
-        onApprove: async (data: any, actions: any) => {},
+        onApprove: async (data: any, actions: any) => {
+          console.log(
+            '🚀 ~ CheckoutComponent ~ onApprove: ~ actions:',
+            actions
+          );
+          console.log('🚀 ~ CheckoutComponent ~ onApprove: ~ data:', data);
+          let orderPaypal: any = null;
+
+          try {
+            orderPaypal = await actions.order.capture();
+          } catch (error) {
+            throw error;
+          }
+
+          if (orderPaypal.status != EnumPayPalStatus.COMPLETED)
+            throw 'Paypal error';
+
+          const idShop: string = localStorage.getItem(EnumLocalStorage.ID_SHOP);
+
+          this.cart.forEach(async (cart: ICart) => {
+            let processOrder: IorderProcess[] = [
+              {
+                stage: 'reviewed',
+                status: EnumOrderProcessStatus.pending,
+                comment: '',
+                date: new Date().toISOString(),
+              },
+              { stage: 'sent', status: null, comment: '', date: '' },
+              { stage: 'delivered', status: null, comment: '', date: '' },
+            ];
+            let order: Iorders = {
+              address: this.address.value,
+              city: this.city.value,
+              country: this.country.value,
+              email: this.email.value,
+              phone: this.cellphone.value,
+              price: String(this.calcularTotal()),
+              process: JSON.stringify(processOrder),
+              status: EnumOrderStatus.pending,
+              idShop: localStorage.getItem(EnumLocalStorage.ID_SHOP),
+              details: null,
+              product: cart.product.name,
+              category: cart.product.category,
+              quantity: cart.quantity,
+              url: cart.product.url,
+              user: this.email.value,
+            };
+
+            let resOrder = await this.ordersService.postDataFS(order);
+
+            let sale: Isales = {
+              date: new Date(),
+              id_order: resOrder.id,
+              id_payment: orderPaypal.id,
+              payment_method: EnumPayMethods.PAYPAL,
+              product: cart.product.id,
+              quantity: cart.quantity,
+              status: EnumSalesStatus.pending,
+              total: cart.quantity * cart.product.price,
+              unit_price: cart.product.price,
+              idShop,
+            };
+
+            await this.salesService.postDataFS(sale);
+          });
+
+          alerts.basicAlert(
+            'Finalizado',
+            'La transaccion a finalizado',
+            'success'
+          );
+        },
         onError: (err: any) => {
           alerts.basicAlert(
             'Pago erroneo',
