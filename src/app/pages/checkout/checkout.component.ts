@@ -30,11 +30,13 @@ import { Iproducts } from 'src/app/interfaces/i-products';
 import { EnumSalesStatus, Isales } from 'src/app/interfaces/i-sales';
 import { IState } from 'src/app/interfaces/i-state';
 import { IFireStoreRes } from 'src/app/interfaces/iFireStoreRes';
+import { Iusers } from 'src/app/interfaces/iusers';
 import { GlobalDataService } from 'src/app/services/global-data.service';
 import { LocationService } from 'src/app/services/location.service';
 import { MetodosDePagoService } from 'src/app/services/metodos-de-pago.service';
 import { OrdersService } from 'src/app/services/orders.service';
 import { SalesService } from 'src/app/services/sales.service';
+import { UsersService } from 'src/app/services/users.service';
 import { environment } from 'src/environments/environment';
 
 declare var paypal: any;
@@ -168,7 +170,8 @@ export class CheckoutComponent implements OnInit {
     private locationService: LocationService,
     private metodosDePagoService: MetodosDePagoService,
     private ordersService: OrdersService,
-    private salesService: SalesService
+    private salesService: SalesService,
+    private usersService: UsersService
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -351,11 +354,6 @@ export class CheckoutComponent implements OnInit {
           });
         },
         onApprove: async (data: any, actions: any) => {
-          console.log(
-            '🚀 ~ CheckoutComponent ~ onApprove: ~ actions:',
-            actions
-          );
-          console.log('🚀 ~ CheckoutComponent ~ onApprove: ~ data:', data);
           let orderPaypal: any = null;
 
           try {
@@ -415,6 +413,32 @@ export class CheckoutComponent implements OnInit {
 
             await this.salesService.postDataFS(sale);
           });
+
+          let resUser: IFireStoreRes[];
+          try {
+            let qf: QueryFn = (ref) =>
+              ref.where('email', '==', this.email.value);
+            resUser = await this.usersService.getDataFS(qf).toPromise();
+          } catch (error) {}
+
+          const userData: Iusers = {
+            address: this.address.value,
+            city: this.city.value,
+            country: this.country.value,
+            state: this.state.value,
+            name: this.name.value,
+            email: this.email.value,
+            phone: this.cellphone.value,
+            idType: this.idType.value,
+            idValue: this.idValue.value,
+            idShop: localStorage.getItem(EnumLocalStorage.ID_SHOP),
+          };
+          if (resUser && resUser.length > 0 && resUser[0].id) {
+            let userDb: Iusers = { ...resUser[0].data, id: resUser[0].id };
+            this.usersService.patchDataFS(userDb.id, userData);
+          } else {
+            this.usersService.postDataFS(userData);
+          }
 
           alerts.basicAlert(
             'Finalizado',
